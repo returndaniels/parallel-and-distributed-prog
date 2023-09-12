@@ -1,5 +1,11 @@
-
+# source
 old_src/
 
-bin/
+# binaries
+bin/*
 
+# folders
+.vscode/
+
+# to maintain
+!bin/.gitkeep
