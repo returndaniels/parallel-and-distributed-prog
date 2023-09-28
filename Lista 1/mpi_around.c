@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     printf("Processo %d enviou a mensagem inicial: %d\n", rank, valor);
   }
 
-  while (1)
+  while (valor != 0)
   {
     // Todos os processos passam a mensagem adiante no anel
     MPI_Send(&valor, 1, MPI_INT, dest, 0, MPI_COMM_WORLD);
@@ -27,15 +27,10 @@ int main(int argc, char *argv[])
     printf("Processo %d recebeu a mensagem: %d\n", rank, valor);
 
     // Se o valor atingir 0, o processo encerra
-    if (valor == 0)
-    {
-      printf("Processo %d terminou.\n", rank);
-      break;
-    }
-
-    // Decrementa o valor
-    valor--;
+    if (rank == 0)
+      valor--;
   }
+  MPI_Send(&valor, 1, MPI_INT, dest, 0, MPI_COMM_WORLD);
   MPI_Finalize();
   return 0;
 }
