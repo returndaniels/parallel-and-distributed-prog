@@ -21,12 +21,20 @@ int main(int argc, char *argv[])
 
   while (valor != 0)
   {
-    // Todos os processos passam a mensagem adiante no anel
-    MPI_Send(&valor, 1, MPI_INT, dest, 0, MPI_COMM_WORLD);
-    MPI_Recv(&valor, 1, MPI_INT, fonte, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-    printf("Processo %d recebeu a mensagem: %d\n", rank, valor);
+    if (rank == 0)
+    {
+      MPI_Send(&valor, 1, MPI_INT, dest, 0, MPI_COMM_WORLD);
+      MPI_Recv(&valor, 1, MPI_INT, fonte, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      printf("Processo %d anviou a mensagem: %d\n", rank, valor);
+    }
+    else
+    {
+      // Todos os processos recebem e passam a mensagem adiante no anel
+      MPI_Recv(&valor, 1, MPI_INT, fonte, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      MPI_Send(&valor, 1, MPI_INT, dest, 0, MPI_COMM_WORLD);
+      printf("Processo %d recebeu a mensagem: %d\n", rank, valor);
+    }
 
-    // Se o valor atingir 0, o processo encerra
     if (rank == 0)
       valor--;
   }
