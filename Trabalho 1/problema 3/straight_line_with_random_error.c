@@ -4,7 +4,7 @@
 #include <string.h>
 
 #define DEFAULT_N 10
-#define DEFAULT_FILENAME "coordenadas.txt"
+#define DEFAULT_FILENAME "xydata"
 #define MAX_ABS_ERROR 1.0
 
 int main()

@@ -10,6 +10,7 @@ int main(int argc, char **argv)
   double mySUMx, mySUMy, mySUMxy, mySUMxx, SUMx, SUMy, SUMxy,
       SUMxx, SUMres, res, slope, y_intercept, y_estimate;
   int i, j, n, myid, numprocs, naverage, nremain, mypoints, ishift;
+  double start_time, end_time;
   MPI_Status istatus;
   FILE *infile;
 
@@ -20,6 +21,8 @@ int main(int argc, char **argv)
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &myid);
   MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+
+  start_time = MPI_Wtime();
 
   // Passo 1: O Processo 0 lê os dados e transmite o valor de n
   if (myid == 0)
@@ -42,9 +45,7 @@ int main(int argc, char **argv)
     y = (double *)malloc(n * sizeof(double));
   }
 
-  /* ----------------------------------------------------------
-   * Passo 2: O Processo 0 envia subconjuntos de x e y
-   * ---------------------------------------------------------- */
+  // Passo 2: O Processo 0 envia subconjuntos de x e y
   naverage = n / numprocs;
   nremain = n % numprocs;
   if (myid == 0)
@@ -71,9 +72,7 @@ int main(int argc, char **argv)
     printf("\n");
   }
 
-  /* ----------------------------------------------------------
-   * Passo 3: Cada processo calcula a sua soma parcial
-   * ---------------------------------------------------------- */
+  // Passo 3: Cada processo calcula a sua soma parcial
   mySUMx = 0;
   mySUMy = 0;
   mySUMxy = 0;
@@ -91,18 +90,13 @@ int main(int argc, char **argv)
     mySUMxx = mySUMxx + x[ishift + j] * x[ishift + j];
   }
 
-  /* ----------------------------------------------------------
-   * Passo 4: Todos os processos realizam uma operação de redução
-   * para obter as somas globais
-   * ---------------------------------------------------------- */
+  // Passo 4: Todos os processos realizam uma operação de redução para obter as somas globais
   MPI_Reduce(&mySUMx, &SUMx, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Reduce(&mySUMy, &SUMy, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Reduce(&mySUMxy, &SUMxy, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Reduce(&mySUMxx, &SUMxx, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
-  /* ----------------------------------------------------------
-   * Passo 5: O Processo 0 calcula a linha de regressão linear
-   * ---------------------------------------------------------- */
+  // Passo 5: O Processo 0 calcula a linha de regressão linear
   if (myid == 0)
   {
     slope = (SUMx * SUMy - n * SUMxy) / (SUMx * SUMx - n * SUMxx);
@@ -124,8 +118,12 @@ int main(int argc, char **argv)
       printf("   (%6.2lf %6.2lf)      %6.2lf       %6.2lf\n",
              x[i], y[i], y_estimate, res);
     }
+
+    end_time = MPI_Wtime();
+
     printf("--------------------------------------------------\n");
     printf("Soma dos resíduos = %6.2lf\n", SUMres);
+    printf("Tempo de execução: %f segundos\n", end_time - start_time);
   }
 
   /* ----------------------------------------------------------	*/
