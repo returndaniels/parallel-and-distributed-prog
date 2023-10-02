@@ -1,6 +1,12 @@
+# pastas especifícas
 .vscode/
-*.json
 
+# pastas com nome especificos
 **/bin/
 
+# extensões de arquivos
 *.txt
+*.json
+
+# arquivos especificos
+xydata
