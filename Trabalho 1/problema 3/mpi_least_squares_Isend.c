@@ -11,6 +11,7 @@ int main(int argc, char **argv)
       SUMxx, SUMres, res, slope, y_intercept, y_estimate;
   int i, j, n, myid, numprocs, naverage, nremain, mypoints, ishift;
   MPI_Status istatus;
+  MPI_Request x_request, y_request;
   FILE *infile;
 
   infile = fopen("xydata", "r");
@@ -53,10 +54,14 @@ int main(int argc, char **argv)
     {
       ishift = i * naverage;
       mypoints = (i < numprocs - 1) ? naverage : naverage + nremain;
-      MPI_Send(&ishift, 1, MPI_INT, i, 1, MPI_COMM_WORLD);
-      MPI_Send(&mypoints, 1, MPI_INT, i, 2, MPI_COMM_WORLD);
-      MPI_Send(&x[ishift], mypoints, MPI_DOUBLE, i, 3, MPI_COMM_WORLD);
-      MPI_Send(&y[ishift], mypoints, MPI_DOUBLE, i, 4, MPI_COMM_WORLD);
+
+      // Usa MPI_Isend para enviar os dados de x e y
+      MPI_Isend(&x[ishift], mypoints, MPI_DOUBLE, i, 3, MPI_COMM_WORLD, &x_request);
+      MPI_Isend(&y[ishift], mypoints, MPI_DOUBLE, i, 4, MPI_COMM_WORLD, &y_request);
+
+      // Espera pela conclusão das operações de envio
+      MPI_Wait(&x_request, &istatus);
+      MPI_Wait(&y_request, &istatus);
     }
   }
   else
