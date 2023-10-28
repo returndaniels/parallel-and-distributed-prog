@@ -44,7 +44,7 @@ void simulate(double plate[N][N])
 
   while (iteration < M && error > 0.0001)
   {
-    error = 0.1;
+    error = 0.01;
 #pragma omp parallel for reduction(max : error) private(oldPlate)
     for (int i = 1; i < N - 1; i++)
       for (int j = 1; j < N - 1; j++)
