@@ -3,6 +3,7 @@
 
 # pastas com nome especificos
 **/bin/
+**/out/
 
 # extensões de arquivos
 *.txt
