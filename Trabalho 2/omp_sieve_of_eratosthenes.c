@@ -4,10 +4,12 @@
 #include <omp.h>
 #include <string.h>
 
-void sieveOfEratosthenes(int n)
+#define N 30000000000
+
+void sieveOfEratosthenes(long long int n)
 {
   int *prime = (int *)malloc((n + 1) * sizeof(int));
-  int i, p, count = 0;
+  long long int i, p, count = 0;
 
 #pragma omp parallel for
   for (i = 0; i <= n; i++)
@@ -39,14 +41,14 @@ void sieveOfEratosthenes(int n)
     }
   }
 
-  printf("O total de números primos entre 2 e %d é: %d\n", n, count);
+  printf("O total de números primos entre 2 e %lld é: %lld\n", n, count);
 
   free(prime);
 }
 
 int main(int argc, char *argv[])
 {
-  int n = -1;
+  long long int n = N;
 
   for (int i = 1; i < argc; i++)
   {
@@ -64,13 +66,7 @@ int main(int argc, char *argv[])
         n = atoi(argv[i + 1]);
   }
 
-  if (n == -1)
-  {
-    printf("Digite o valor de N: ");
-    scanf("%d", &n);
-  }
-  else
-    printf("O valor de N é: %d\n", n);
+  printf("O valor de N é: %lld\n", n);
 
   clock_t start, end;
   double cpu_time_used;

@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-void sieveOfEratosthenes(int n)
+#define N 300000000
+
+void sieveOfEratosthenes(long long int n)
 {
   int *prime = (int *)malloc((n + 1) * sizeof(int));
-  int i, p, count = 0;
+  long long int i, p, count = 0;
 
   for (i = 0; i <= n; i++)
   {
@@ -34,25 +36,18 @@ void sieveOfEratosthenes(int n)
     }
   }
 
-  printf("O total de números primos entre 2 e %d é: %d\n", n, count);
+  printf("O total de números primos entre 2 e %lld é: %lld\n", n, count);
 
   free(prime);
 }
 
 int main(int argc, char *argv[])
 {
-  int n;
+  long long int n = N;
 
-  if (argc < 2)
-  {
-    printf("Digite o valor de N: ");
-    scanf("%d", &n);
-  }
-  else
-  {
-    n = atoi(argv[1]);
-    printf("O valor de N é: %d\n", n);
-  }
+  if (argc >= 2)
+    n = atoll(argv[1]);
+  printf("O valor de N é: %lld\n", n);
 
   clock_t start, end;
   double cpu_time_used;
