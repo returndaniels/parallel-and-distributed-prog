@@ -69,12 +69,11 @@ int main(int argc, char *argv[])
   double start, end, cpu_time_used;
 
   for (int i = 1; i < argc; i++)
-    if (strcmp(argv[i], "-nt") == 0)
-      if (i < argc)
-      {
-        printf("num_threads %d", num_threads);
-        omp_set_num_threads(num_threads);
-      }
+    if (strcmp(argv[i], "-nt") == 0 && i < argc)
+    {
+      num_threads = atoi(argv[i + 1]);
+      omp_set_num_threads(num_threads);
+    }
 
   initializePlate(plate);
 
