@@ -39,14 +39,23 @@ void sieveOfEratosthenes(int n)
   free(prime);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
   int n;
+
+  if (argc < 2)
+  {
+    printf("Digite o valor de N: ");
+    scanf("%d", &n);
+  }
+  else
+  {
+    n = atoi(argv[1]);
+    printf("O valor de N é: %d\n", n);
+  }
+
   clock_t start, end;
   double cpu_time_used;
-
-  printf("Digite o valor de N: ");
-  scanf("%d", &n);
 
   start = clock();
   sieveOfEratosthenes(n);
