@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <omp.h>
+#include <string.h>
 
 #define N 1022             // Tamanho da placa
 #define M 4098             // Número de iterações
@@ -61,10 +62,19 @@ void simulate(double plate[N][N])
   }
 }
 
-int main()
+int main(int argc, char *argv[])
 {
+  int num_threads;
   double plate[N][N];
   double start, end, cpu_time_used;
+
+  for (int i = 1; i < argc; i++)
+    if (strcmp(argv[i], "-nt") == 0)
+      if (i < argc)
+      {
+        printf("num_threads %d", num_threads);
+        omp_set_num_threads(num_threads);
+      }
 
   initializePlate(plate);
 
