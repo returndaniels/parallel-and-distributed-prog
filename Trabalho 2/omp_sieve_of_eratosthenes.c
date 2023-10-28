@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <omp.h>
 #include <string.h>
 
@@ -63,19 +62,18 @@ int main(int argc, char *argv[])
     }
     else if (strcmp(argv[i], "-N") == 0)
       if (i < argc)
-        n = atoi(argv[i + 1]);
+        n = atoll(argv[i + 1]);
   }
 
   printf("O valor de N é: %lld\n", n);
 
-  clock_t start, end;
-  double cpu_time_used;
+  double start, end, cpu_time_used;
 
-  start = clock();
+  start = omp_get_wtime();
   sieveOfEratosthenes(n);
-  end = clock();
+  end = omp_get_wtime();
 
-  cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+  cpu_time_used = end - start;
   printf("Tempo de execução: %f segundos\n", cpu_time_used);
 
   return 0;

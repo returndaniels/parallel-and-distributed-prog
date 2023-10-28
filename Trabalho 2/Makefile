@@ -4,9 +4,9 @@ OMP_FLAGS = -fopenmp
 TARGET_DIR = bin
 OUTPUT_DIR = out
 
-.PHONY: all clean
+.PHONY: all clean testes
 
-all: seq_primos omp_primos run_tests
+all: seq_primos omp_primos
 
 seq_primos: sieve_of_eratosthenes.c | create_dir
 	$(CC) $(CFLAGS) sieve_of_eratosthenes.c -o $(TARGET_DIR)/seq_primos
@@ -18,7 +18,10 @@ create_dir:
 	@mkdir -p $(TARGET_DIR)
 	@mkdir -p $(OUTPUT_DIR)
 
+testes: run_tests
+
 run_tests: 
+	rm -rf $(OUTPUT_DIR)/*.txt
 	@echo "Rodando testes com 1 thread..."
 	@for i in $$(seq 1 5); do $(TARGET_DIR)/omp_primos -nt 1 >> $(OUTPUT_DIR)/n1.txt; done
 	@echo "Rodando testes com 8 thread..."
