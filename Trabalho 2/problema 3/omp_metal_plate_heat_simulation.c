@@ -2,20 +2,21 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define N 10           // Tamanho da grade
-#define M 1000         // Número de iterações
-#define SOR_FACTOR 1.5 // Fator de relaxamento
+#define N 1022             // Tamanho da placa
+#define M 4098             // Número de iterações
+#define SOR_FACTOR 1.3     // Fator de relaxamento
+#define SOURCE_TEMP_X 800  // Posição x da fonte de calor
+#define SOURCE_TEMP_Y 800  // Posição y da fonte de calor
+#define SOURCE_TEMP 100.0  // Temperatura da fonte de calor
+#define BOUNDARY_TEMP 20.0 // Temperatura das bordas
 
+// Inicialização da placa
 void initializePlate(double plate[N][N])
 {
   for (int i = 0; i < N; i++)
     for (int j = 0; j < N; j++)
-    {
-      if (i == 0 || j == 0 || i == N - 1 || j == N - 1)
-        plate[i][j] = 100.0; // Temperatura fixa nas bordas
-      else
-        plate[i][j] = 0.0; // Temperatura inicial em outros lugares
-    }
+      plate[i][j] = BOUNDARY_TEMP;                   // Temperatura inicial
+  plate[SOURCE_TEMP_X][SOURCE_TEMP_Y] = SOURCE_TEMP; // Configuração da fonte de calor
 }
 
 // Imprime a placa
@@ -44,7 +45,10 @@ void simulate(double plate[N][N])
       for (int j = 1; j < N - 1; j++)
       {
         oldPlate[i][j] = plate[i][j];
-        plate[i][j] = (1 - SOR_FACTOR) * plate[i][j] + SOR_FACTOR * 0.25 * (plate[i - 1][j] + plate[i][j - 1] + plate[i][j + 1] + plate[i + 1][j]);
+
+        // Excluir a fonte de calor dos cálculos
+        if (i != SOURCE_TEMP_X || j != SOURCE_TEMP_Y)
+          plate[i][j] = (1 - SOR_FACTOR) * plate[i][j] + SOR_FACTOR * 0.25 * (plate[i - 1][j] + plate[i][j - 1] + plate[i][j + 1] + plate[i + 1][j]);
         double currentError = fabs(plate[i][j] - oldPlate[i][j]);
         if (currentError > error)
           error = currentError;
@@ -59,11 +63,13 @@ int main()
 
   initializePlate(plate);
   printf("Placa inicial:\n");
-  printPlate(plate);
+  // Não imprimiremos a placa inicial novamente para evitar a repetição
+  // printPlate(plate);
 
   simulate(plate);
+  // Não imprimiremos a placa inicial novamente para evitar a repetição
   printf("Placa final:\n");
-  printPlate(plate);
+  // printPlate(plate);
 
   return 0;
 }
