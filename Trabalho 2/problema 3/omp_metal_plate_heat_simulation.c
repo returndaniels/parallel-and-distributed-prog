@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <omp.h>
 
 #define N 1022             // Tamanho da placa
 #define M 4098             // Número de iterações
@@ -13,6 +14,7 @@
 // Inicialização da placa
 void initializePlate(double plate[N][N])
 {
+#pragma omp parallel for
   for (int i = 0; i < N; i++)
     for (int j = 0; j < N; j++)
       plate[i][j] = BOUNDARY_TEMP;                   // Temperatura inicial
@@ -22,6 +24,7 @@ void initializePlate(double plate[N][N])
 // Imprime a placa
 void printPlate(double plate[N][N])
 {
+#pragma omp parallel for
   for (int i = 0; i < N; i++)
   {
     for (int j = 0; j < N; j++)
@@ -40,16 +43,17 @@ void simulate(double plate[N][N])
 
   while (iteration < M && error > 0.0001)
   {
-    error = 0.0;
+    error = 0.1;
+#pragma omp parallel for reduction(max : error) private(oldPlate)
     for (int i = 1; i < N - 1; i++)
       for (int j = 1; j < N - 1; j++)
       {
-        oldPlate[i][j] = plate[i][j];
+        double oldPlate = plate[i][j];
 
         // Excluir a fonte de calor dos cálculos
         if (i != SOURCE_TEMP_X || j != SOURCE_TEMP_Y)
           plate[i][j] = (1 - SOR_FACTOR) * plate[i][j] + SOR_FACTOR * 0.25 * (plate[i - 1][j] + plate[i][j - 1] + plate[i][j + 1] + plate[i + 1][j]);
-        double currentError = fabs(plate[i][j] - oldPlate[i][j]);
+        double currentError = fabs(plate[i][j] - oldPlate);
         if (currentError > error)
           error = currentError;
       }
@@ -60,16 +64,24 @@ void simulate(double plate[N][N])
 int main()
 {
   double plate[N][N];
+  double start, end, cpu_time_used;
 
   initializePlate(plate);
-  printf("Placa inicial:\n");
+
   // Não imprimiremos a placa inicial novamente para evitar a repetição
+  // printf("Placa inicial:\n");
   // printPlate(plate);
 
+  start = omp_get_wtime();
   simulate(plate);
+  end = omp_get_wtime();
+
   // Não imprimiremos a placa inicial novamente para evitar a repetição
-  printf("Placa final:\n");
+  // printf("Placa final:\n");
   // printPlate(plate);
+
+  cpu_time_used = end - start;
+  printf("Tempo de execução: %f segundos\n", cpu_time_used);
 
   return 0;
 }
