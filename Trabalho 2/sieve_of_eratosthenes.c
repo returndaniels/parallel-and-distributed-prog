@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 void sieveOfEratosthenes(int n)
 {
@@ -41,8 +42,18 @@ void sieveOfEratosthenes(int n)
 int main()
 {
   int n;
+  clock_t start, end;
+  double cpu_time_used;
+
   printf("Digite o valor de N: ");
   scanf("%d", &n);
+
+  start = clock();
   sieveOfEratosthenes(n);
+  end = clock();
+
+  cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+  printf("Tempo de execução: %f segundos\n", cpu_time_used);
+
   return 0;
 }
