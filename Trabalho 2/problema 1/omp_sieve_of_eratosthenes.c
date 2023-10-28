@@ -3,7 +3,7 @@
 #include <omp.h>
 #include <string.h>
 
-#define N 3000000000
+#define N 12000000000
 
 void sieveOfEratosthenes(long long int n)
 {
