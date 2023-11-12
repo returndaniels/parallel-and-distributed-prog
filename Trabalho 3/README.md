@@ -91,6 +91,7 @@ A construção `distribute parallel for` é uma diretiva fornecida pela OpenMP p
 Aqui estão alguns exemplos simplificados de como você pode usar `distribute parallel for`:
 ```c
 #include <stdio.h>
+#include <omp.h>
 
 int main() {
   int n = 100;
@@ -198,13 +199,12 @@ int main() {
 }
 ```
 
-Use o código com cuidado. Saiba mais
 Este código irá ler uma imagem do disco e, em seguida, filtrá-la usando um limiar. O #pragma omp distribute parallel for é usado para dividir o loop de filtragem em chunks. Cada chunk é então executado em uma thread diferente.
 
-Neste exemplo, o loop de filtragem é executado 10000 vezes. Sem o #pragma omp distribute parallel for, cada iteração do loop seria executada por uma thread diferente. No entanto, com o #pragma omp distribute parallel for, o loop é dividido em 100 chunks. Cada chunk é então executado por um grupo de 10 threads. Isso pode melhorar significativamente o desempenho do código, pois as threads podem executar as iterações do loop em paralelo.
+Neste exemplo, o loop de filtragem é executado 10000 vezes. Sem o `#pragma omp distribute parallel for`, cada iteração do loop seria executada por uma thread diferente. No entanto, com o `#pragma omp distribute parallel for`, o loop é dividido em 100 chunks. Cada chunk é então executado por um grupo de 10 threads. Isso pode melhorar significativamente o desempenho do código, pois as threads podem executar as iterações do loop em paralelo.
 
-Aqui estão alguns outros exemplos de uso real do #pragma omp distribute parallel for:
+Aqui estão alguns outros exemplos de uso real do `#pragma omp distribute parallel for` for:
 
-Processamento de imagens: O #pragma omp distribute parallel for pode ser usado para acelerar algoritmos de processamento de imagens, como filtragem, segmentação e reconhecimento de objetos.
-Processamento de dados: O #pragma omp distribute parallel for pode ser usado para acelerar algoritmos de processamento de dados, como análise de dados, aprendizado de máquina e mineração de dados.
-Simulação: O #pragma omp distribute parallel for pode ser usado para acelerar algoritmos de simulação, como simulação de fluidos, simulação de partículas e simulação de sistemas biológicos.
+Processamento de imagens: O `#pragma omp distribute parallel for` pode ser usado para acelerar algoritmos de processamento de imagens, como filtragem, segmentação e reconhecimento de objetos.
+Processamento de dados: O `#pragma omp distribute parallel for` pode ser usado para acelerar algoritmos de processamento de dados, como análise de dados, aprendizado de máquina e mineração de dados.
+Simulação: O `#pragma omp distribute parallel for` pode ser usado para acelerar algoritmos de simulação, como simulação de fluidos, simulação de partículas e simulação de sistemas biológicos.
