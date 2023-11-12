@@ -2,8 +2,6 @@
 
 ## #pragma omp parallel
 
-A diretiva `#pragma omp parallel` é utilizada para criar uma região paralela em um programa, permitindo que várias threads executem um bloco de código simultaneamente. 
-
 A diretiva `#pragma omp parallel` é usada para criar uma equipe (ou time) de threads. Ela delimita uma região paralela do código, indicando que o bloco de código dentro dessa região deve ser executado por várias threads.
 
 **Funcionamento:**
