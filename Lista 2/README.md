@@ -105,7 +105,14 @@ A cláusula `schedule` no OpenMP controla como as iterações de um loop são di
 4. **Auto:** Deixa a escolha para o compilador.
 5. **Runtime:** Determina o tipo em tempo de execução.
 
-### **Questão 8** - 
+### **Questão 8** - No código abaixo, faça um diagrama do escalonamento das iterações do laço entre 4 threads. (0,5 ponto)
+
+A cláusula `schedule(guided, 5)` no OpenMP indica que as iterações do loop serão distribuídas dinamicamente entre as threads, com tamanhos de chunks maiores inicialmente e reduzidos gradualmente. Nesse caso, como são 50 iterações e 4 threads, vamos realizar o escalonamento considerando esse cenário.
+
+O padrão `guided` divide as iterações em chunks maiores inicialmente, mas diminui o tamanho dos chunks à medida que as iterações prosseguem. O número 5 (`guided, 5`) especifica o tamanho mínimo do chunk.
+
+- Com 50 iterações, o tamanho inicial do chunk pode ser 50/4 = 12,5, então a primeira thread pode obter um chunk maior.
+- Supondo que o tamanho mínimo seja 5 (especificado na cláusula `schedule(guided, 5)`), à medida que as iterações continuam, o tamanho do chunk diminui à medida que menos iterações permanecem.
 
 ### **Questão 9** - Reescreva o código seguinte, colocando as operações de barreira explicitamente, de modo a maximizar o desempenho, mas sem alterar o resultado da execução. (0,5 ponto)
 
@@ -192,8 +199,54 @@ int main() {
 
 Neste exemplo, a matriz `a` é preenchida com o valor `1.0` em todas as colunas correspondentes à thread atual (`myid`) para cada linha do loop paralelo. Certifique-se de ajustar `MAX_ROWS` e `MAX_COLS` para os tamanhos desejados da matriz. A função `omp_set_num_threads()` define o número de threads a serem usadas para o paralelismo.
 
-### **Questão 12** - 
-### **Questão 13** - 
+### **Questão 12** - Explique porque cada um dos laços a seguir pode ou não pode ser paralelizado com a diretiva parallel for. (0,5 ponto)
+
+a) `for (i = 0; i < N ; i ++) if (x[i] > maxval) break;`
+
+- Não pode ser paralelizado, pois a cláusula `break` pode levar a condições de corrida entre as threads, já que o término do loop depende de uma condição individual.
+
+b) `for (i = 0; i < N ; i ++) for (j = 0; j < i ; j++) a[j][i] = a[j+1][i];`
+
+- Não pode ser paralelizado, pois cada iteração do loop interno (`j`) depende dos resultados das iterações anteriores do mesmo loop, criando dependências entre as iterações.
+
+c) `for (k=0 ; k<n ; k++) { x[k] = q + y[k]*( r*z[k+10] + t*z[k+11] ); }`
+
+- Pode ser paralelizado, pois cada iteração do loop é independente das outras, não há dependências entre as iterações e cada `x[k]` é atualizado independentemente das outras iterações.
+
+d) `for (i = 1 ; i < N ; i++) { x[i] = z[i]*( y[i] - x[i-1] ); }`
+
+- Não pode ser paralelizado diretamente, pois cada iteração depende do resultado da iteração anterior (`x[i-1]`). Isso cria uma dependência de dados entre as iterações.
+
+e) `for (i = 0; i < N ; i ++) { a[i] = a[i] * a[i]; if (fabs(a[i]) > machine_max||fabs(a[i]) < machine_min){ printf (“i = %d \n”, i); break; } }`
+
+- Pode ser paralelizado, pois cada iteração é independente das outras até encontrar uma condição de quebra (`break`). A cláusula `break` será acionada apenas quando uma condição específica for atendida para uma iteração.
+
+f) `for ( i = 1 ; i < N ; i++ ) { for ( k=0 ; k<i ; k++ ) w[i] += b[k][i] * w[(i-k)-1]; }`
+
+- Não pode ser paralelizado diretamente, pois cada iteração do loop externo (`i`) depende dos resultados das iterações anteriores do mesmo loop (`w[i]`). As iterações do loop interno (`k`) também dependem das iterações anteriores dentro de cada iteração do loop externo.
+
+g) `for ( k = 0 ; k < N ; k++ ) { x[k] = u[k] + r*( z[k] + r*y[k] ) + t*( u[k+3] + r*( u[k+2] + r*u[k+1] ) + t*( u[k+6] + r*( u[k+5] + r*u[k+4] ) ) ); }`
+
+- Pode ser paralelizado, pois cada iteração é independente das outras, e a atualização de `x[k]` não depende das iterações anteriores.
+
+### **Questão 13** - Considere o seguinte laço:
+```c
+x= 1;
+#pragma omp parallel for firstprivate (x)
+for(i = 0; i < n; i++){
+   y [ i ] = x + i;
+   x = i;
+}
+```
+
+a) Este laço está incorreto porque a variável `x` é compartilhada entre as threads (`firstprivate` apenas inicializa uma variável privada para cada thread com o valor da variável compartilhada fora da região paralela) e é modificada dentro do loop. Como resultado, as threads modificarão `x` concorrentemente, causando resultados imprevisíveis para `y[i]`. Além disso, mesmo que `x` fosse private, as iterações do loop dependeriam dos valores anteriores de `x`, tornando difícil prever o resultado para `y[i]` de forma precisa, independentemente do número de threads.
+
+b) Ao final do laço, o valor da variável `i` será igual a `n - 1` (o último valor que satisfaz a condição do loop `i < n`). O valor final de `x` será igual ao último valor atribuído a `x` dentro do loop, ou seja, `x = n - 1`.
+
+c) Se `x` fosse declarado como `shared`, todas as threads compartilhariam a mesma variável `x` e a modificariam concorrentemente. O valor final de `x` nesse caso seria imprevisível, pois as threads estariam atualizando `x` concorrentemente.
+
+d) Não, este loop não pode ser paralelizado corretamente mantendo a semântica sequencial apenas com o uso de diretivas OpenMP. Isso porque a modificação concorrente de `x` e a dependência das iterações em valores anteriores de `x` tornam impossível manter a semântica correta do loop ao paralelizá-lo.
+
 ### **Questão 14** - Qual o significado das variáveis de ambiente no OpenMP e como elas são usadas? (0,5 ponto)
 
 As variáveis de ambiente no OpenMP, com prefixo `OMP_`, controlam aspectos da execução paralela, como número de threads (`OMP_NUM_THREADS`), afinidade de threads (`OMP_PROC_BIND`), escalonamento (`OMP_SCHEDULE`), entre outros. São configuradas antes da execução do programa para ajustar o comportamento das threads paralelas.
