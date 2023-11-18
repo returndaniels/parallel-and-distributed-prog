@@ -2,8 +2,6 @@
 
 ## #pragma omp parallel
 
-A diretiva `#pragma omp parallel` é utilizada para criar uma região paralela em um programa, permitindo que várias threads executem um bloco de código simultaneamente. 
-
 A diretiva `#pragma omp parallel` é usada para criar uma equipe (ou time) de threads. Ela delimita uma região paralela do código, indicando que o bloco de código dentro dessa região deve ser executado por várias threads.
 
 **Funcionamento:**
@@ -205,6 +203,7 @@ Neste exemplo, o loop de filtragem é executado 10000 vezes. Sem o `#pragma omp 
 
 Aqui estão alguns outros exemplos de uso real do `#pragma omp distribute parallel for` for:
 
+<<<<<<< HEAD
 Processamento de imagens: O `#pragma omp distribute parallel for` pode ser usado para acelerar algoritmos de processamento de imagens, como filtragem, segmentação e reconhecimento de objetos.
 Processamento de dados: O `#pragma omp distribute parallel for` pode ser usado para acelerar algoritmos de processamento de dados, como análise de dados, aprendizado de máquina e mineração de dados.
 Simulação: O `#pragma omp distribute parallel for` pode ser usado para acelerar algoritmos de simulação, como simulação de fluidos, simulação de partículas e simulação de sistemas biológicos.
