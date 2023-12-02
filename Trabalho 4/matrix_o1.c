@@ -4,7 +4,7 @@
 
 #define N 2000
 
-void matrix_multiply_01(int a[N][N], int b[N][N], int x[N][N])
+void matrix_multiply_01(int **a, int **b, int **c)
 {
   for (int i = 0; i < N; i++)
     for (int j = 0; j < N; j++)
@@ -12,7 +12,7 @@ void matrix_multiply_01(int a[N][N], int b[N][N], int x[N][N])
       int temp = 0;
       for (int k = 0; k < N; k++)
         temp += a[i][k] * b[k][j];
-      x[i][j] = temp;
+      c[i][j] = temp;
     }
 }
 
