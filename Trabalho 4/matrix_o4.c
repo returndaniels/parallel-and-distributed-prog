@@ -36,18 +36,12 @@ void block_multiply(int *a, int *b, int *x, int size, int block_size)
           }
 }
 
-void preencherMatrizAleatoria(int **matriz)
+void preencherMatrizAleatoria(int *matriz)
 {
-  long long int i, j;
   srand(time(NULL));
 
-  for (i = 0; i < N; i++)
-  {
-    for (j = 0; j < N; j++)
-    {
-      matriz[i][j] = rand() % 100;
-    }
-  }
+  for (int i = 0; i < N * N; i++)
+    matriz[i] = rand() % 100;
 }
 
 int main()
@@ -56,39 +50,22 @@ int main()
   clock_t start_time, end_time;
   double total_time;
 
-  int **a;
-  int **b;
-
-  int *d = (int *)malloc(N * N * sizeof(int));
-  int *g = (int *)malloc(N * N * sizeof(int));
-  int *l = (int *)malloc(N * N * sizeof(int));
+  int *a = (int *)malloc(N * N * sizeof(int));
+  int *b = (int *)malloc(N * N * sizeof(int));
+  int *c = (int *)malloc(N * N * sizeof(int));
 
   int block_size = 2;
-
-  a = (int **)malloc(N * sizeof(int *));
-  b = (int **)malloc(N * sizeof(int *));
-  for (int i = 0; i < N; i++)
-  {
-    a[i] = (int *)malloc(N * sizeof(int));
-    b[i] = (int *)malloc(N * sizeof(int));
-  }
 
   preencherMatrizAleatoria(a);
   preencherMatrizAleatoria(b);
 
-  for (long int i = 0; i < N * N; i++)
-  {
-    d[i] = a[i / N][i % N];
-    g[i] = b[i / N][i % N];
-  }
-
   /**
    * TESTE DA FUNÇÃO 4
    */
-  transpose((int *)g, N);
+  transpose((int *)b, N);
 
   // start_time = clock();
-  block_multiply(d, g, l, N, block_size);
+  block_multiply(a, b, c, N, block_size);
   // end_time = clock();
   // total_time = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
   // printf("L) Tempo de execucao: %.10f segundos.\n\n", total_time);
@@ -96,10 +73,10 @@ int main()
   /**
    * SAIDAS
    */
-  // printf("Matriz resultante l:\n");
+  // printf("Matriz resultante c:\n");
   // for (int i = 0; i < N * N; i++)
   // {
-  //   printf("%d ", l[i]);
+  //   printf("%d ", c[i]);
   //   if ((i + 1) % N == 0)
   //     printf("\n");
   // }
