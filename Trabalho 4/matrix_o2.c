@@ -4,14 +4,14 @@
 
 #define N 2000
 
-void matrix_multiply_02(int *a, int *b, int *x, int size)
+void matrix_multiply_02(int *a, int *b, int *c, int size)
 {
   for (int i = 0; i < size; i++)
     for (int j = 0; j < size; j++)
     {
       int *pa = a + i * size;     // Ponteiro para a linha i da matriz a
       int *pb = b + j;            // Ponteiro para a coluna j da matriz b
-      int *pc = x + i * size + j; // Ponteiro para x[i][j]
+      int *pc = c + i * size + j; // Ponteiro para x[i][j]
 
       *pc = 0; // Inicializa o valor de x[i][j]
 
@@ -24,18 +24,12 @@ void matrix_multiply_02(int *a, int *b, int *x, int size)
     }
 }
 
-void preencherMatrizAleatoria(int **matriz)
+void preencherMatrizAleatoria(int *matriz)
 {
-  long long int i, j;
   srand(time(NULL));
 
-  for (i = 0; i < N; i++)
-  {
-    for (j = 0; j < N; j++)
-    {
-      matriz[i][j] = rand() % 100;
-    }
-  }
+  for (int i = 0; i < N * N; i++)
+    matriz[i] = rand() % 100;
 }
 
 int main()
@@ -44,37 +38,21 @@ int main()
   clock_t start_time, end_time;
   double total_time;
 
-  int **a;
-  int **b;
-  int **o;
-
-  int *d = (int *)malloc(N * N * sizeof(int));
-  int *e = (int *)malloc(N * N * sizeof(int));
-  int *f = (int *)malloc(N * N * sizeof(int));
-
-  a = (int **)malloc(N * sizeof(int *));
-  b = (int **)malloc(N * sizeof(int *));
-  for (int i = 0; i < N; i++)
-  {
-    a[i] = (int *)malloc(N * sizeof(int));
-    b[i] = (int *)malloc(N * sizeof(int));
-  }
+  int *a = (int *)malloc(N * N * sizeof(int));
+  int *b = (int *)malloc(N * N * sizeof(int));
+  int *c = (int *)malloc(N * N * sizeof(int));
 
   preencherMatrizAleatoria(a);
   preencherMatrizAleatoria(b);
 
-  for (long int i = 0; i < N * N; i++)
-  {
-    d[i] = a[i / N][i % N];
-    e[i] = b[i / N][i % N];
-  }
+  srand(time(NULL));
 
   /**
    * TESTE DA FUNÇÃO 2
    */
 
   // start_time = clock();
-  matrix_multiply_02(d, e, f, N);
+  matrix_multiply_02(a, b, c, N);
   // end_time = clock();
   // total_time = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
   // printf("D) Tempo de execucao: %.10f segundos.\n", total_time);
@@ -82,10 +60,10 @@ int main()
   /**
    * SAIDAS
    */
-  // printf("Matriz resultante f:\n");
+  // printf("Matriz resultante c:\n");
   // for (int i = 0; i < N * N; i++)
   // {
-  //   printf("%d ", f[i]);
+  //   printf("%d ", c[i]);
   //   if ((i + 1) % N == 0)
   //     printf("\n");
   // }
