@@ -4,17 +4,17 @@
 
 int n;
 
-void matrix_multiply(int **a, int **b, int **x)
+void matrix_multiply(int **a, int **b, int **c)
 {
   for (int i = 0; i < n; i++)
     for (int j = 0; j < n; j++)
       for (int k = 0; k < n; k++)
-        x[i][j] += a[i][k] * b[k][j];
+        c[i][j] += a[i][k] * b[k][j];
 }
 
 void preencherMatrizAleatoria(int **matriz)
 {
-  long long int i, j;
+  int i, j;
   srand(time(NULL));
 
   for (i = 0; i < n; i++)
@@ -26,7 +26,6 @@ void preencherMatrizAleatoria(int **matriz)
   }
 }
 
-
 int main(int argc, char const *argv[])
 {
   n = atoi(argv[1]);
@@ -36,28 +35,28 @@ int main(int argc, char const *argv[])
 
   int **a;
   int **b;
-  int **o;
+  int **c;
 
   a = (int **)malloc(n * sizeof(int *));
   b = (int **)malloc(n * sizeof(int *));
-  o = (int **)malloc(n * sizeof(int *));
+  c = (int **)malloc(n * sizeof(int *));
   for (int i = 0; i < n; i++)
   {
     a[i] = (int *)malloc(n * sizeof(int));
     b[i] = (int *)malloc(n * sizeof(int));
-    o[i] = (int *)malloc(n * sizeof(int));
+    c[i] = (int *)malloc(n * sizeof(int));
   }
 
   preencherMatrizAleatoria(a);
   preencherMatrizAleatoria(b);
 
-  for (long int i = 0; i < n * n; i++)
+  for (int i = 0; i < n * n; i++)
   {
-    o[i / n][i % n] = 0;
+    c[i / n][i % n] = 0;
   }
 
   start_time = clock();
-  matrix_multiply(a, b, o);
+  matrix_multiply(a, b, c);
   end_time = clock();
   total_time = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
   printf("%.10f\n", total_time);
